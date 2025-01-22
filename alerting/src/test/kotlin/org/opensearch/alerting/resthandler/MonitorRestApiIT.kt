@@ -448,6 +448,12 @@ class MonitorRestApiIT : AlertingRestTestCase() {
         // searchAlerts should work
         val alerts = searchAlerts(createdMonitor, ScheduledJob.SCHEDULED_JOBS_INDEX)
         assertEquals("No alerts raised, but searchAlerts must work", 0, alerts.size)
+
+        // deleteMonitor should work
+        deleteMonitor(createdMonitor)
+        assertThrows(ResponseException::class.java) {
+            getMonitor(createdMonitor.id)
+        }
     }
 
     /*

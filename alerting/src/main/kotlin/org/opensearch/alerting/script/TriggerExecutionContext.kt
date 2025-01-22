@@ -9,6 +9,7 @@ import org.opensearch.commons.alerting.model.Monitor
 import org.opensearch.commons.alerting.model.MonitorRunResult
 import org.opensearch.commons.alerting.model.Trigger
 import java.time.Instant
+import java.time.ZoneId
 
 abstract class TriggerExecutionContext(
     open val monitor: Monitor,
@@ -29,11 +30,23 @@ abstract class TriggerExecutionContext(
      * translate the context to a Map of Strings to primitive types, which can be accessed without reflection.
      */
     open fun asTemplateArg(): Map<String, Any?> {
+        // Convert periodStart and periodEnd to specified timezone
+        val timezone = monitor.triggers.firstOrNull()?.actions?.firstOrNull()?.timezone
+        val periodStartWithTz = if (!timezone.isNullOrEmpty()) {
+            periodStart.atZone(ZoneId.of(timezone)).toString().replace("[", " [")
+        } else {
+            periodStart
+        }
+        val periodEndWithTz = if (!timezone.isNullOrEmpty()) {
+            periodEnd.atZone(ZoneId.of(timezone)).toString().replace("[", " [")
+        } else {
+            periodEnd
+        }
         return mapOf(
             "monitor" to monitor.asTemplateArg(),
             "results" to results,
-            "periodStart" to periodStart,
-            "periodEnd" to periodEnd,
+            "periodStart" to periodStartWithTz,
+            "periodEnd" to periodEndWithTz,
             "error" to error
         )
     }
