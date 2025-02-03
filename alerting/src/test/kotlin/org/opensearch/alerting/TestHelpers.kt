@@ -427,7 +427,7 @@ fun randomAction(
     destinationId: String = "",
     throttleEnabled: Boolean = false,
     throttle: Throttle = randomThrottle()
-) = Action(name, destinationId, template, template, throttleEnabled, throttle, actionExecutionPolicy = null)
+) = Action(name, destinationId, template, template, throttleEnabled, throttle, actionExecutionPolicy = null, timezone = "UTC")
 
 fun randomActionWithPolicy(
     name: String = OpenSearchRestTestCase.randomUnicodeOfLength(10),
@@ -439,9 +439,9 @@ fun randomActionWithPolicy(
 ): Action {
     return if (actionExecutionPolicy?.actionExecutionScope is PerExecutionActionScope) {
         // Return null for throttle when using PerExecutionActionScope since throttling is currently not supported for it
-        Action(name, destinationId, template, template, throttleEnabled, null, actionExecutionPolicy = actionExecutionPolicy)
+        Action(name, destinationId, template, template, throttleEnabled, null, actionExecutionPolicy = actionExecutionPolicy, timezone = "UTC")
     } else {
-        Action(name, destinationId, template, template, throttleEnabled, throttle, actionExecutionPolicy = actionExecutionPolicy)
+        Action(name, destinationId, template, template, throttleEnabled, throttle, actionExecutionPolicy = actionExecutionPolicy, timezone = "UTC")
     }
 }
 
